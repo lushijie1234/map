@@ -30,6 +30,13 @@
       position: [lng, lat]
     });
     map.add(marker);
+
+    // 关键：地图点击事件
+    map.on('click', function (e) {
+      var endLng = e.lnglat.getLng();
+      var endLat = e.lnglat.getLat();
+      alert('已设为巡航终点：经度 ' + endLng + '，纬度 ' + endLat);
+    });
 </script>
 </body>
 </html>
