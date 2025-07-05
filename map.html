@@ -17,10 +17,13 @@
 <div id="container"></div>
 <script>
     var lng = 116.397428, lat = 39.90923;
+    var endLng = null, endLat = null;
     if (window.location.search) {
       var params = new URLSearchParams(window.location.search);
       lng = parseFloat(params.get('lng')) || lng;
       lat = parseFloat(params.get('lat')) || lat;
+      endLng = parseFloat(params.get('endLng'));
+      endLat = parseFloat(params.get('endLat'));
     }
     var map = new AMap.Map('container', {
       zoom: 15,
@@ -30,6 +33,17 @@
       position: [lng, lat]
     });
     map.add(marker);
+
+    // 新增：显示终点marker
+    if (!isNaN(endLng) && !isNaN(endLat)) {
+      var endMarker = new AMap.Marker({
+        position: [endLng, endLat],
+        icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png', // 高德官方终点图标
+        title: '巡航终点',
+        offset: new AMap.Pixel(-13, -30) // 图标居中
+      });
+      map.add(endMarker);
+    }
 
     // 关键：地图点击事件
     map.on('click', function (e) {
