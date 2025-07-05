@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>AutoCruise Map</title>
+    <style>
+        html, body, #container { width: 100%; height: 100%; margin: 0; padding: 0; }
+    </style>
+    <script>
+        window._AMapSecurityConfig = {
+          securityJsCode: "5b6b64399e3ef9bbf2d4464b9f861125"
+        };
+    </script>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=c814ffc35f2a5e5c94cd14b3ce1fc4fc"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+    var lng = 116.397428, lat = 39.90923;
+    if (window.location.search) {
+      var params = new URLSearchParams(window.location.search);
+      lng = parseFloat(params.get('lng')) || lng;
+      lat = parseFloat(params.get('lat')) || lat;
+    }
+    var map = new AMap.Map('container', {
+      zoom: 15,
+      center: [lng, lat]
+    });
+    var marker = new AMap.Marker({
+      position: [lng, lat]
+    });
+    map.add(marker);
+</script>
+</body>
+</html>
