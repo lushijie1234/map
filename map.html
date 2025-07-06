@@ -19,6 +19,7 @@
     var lng = 116.397428, lat = 39.90923;
     var endLng = null, endLat = null;
     var endPoints = [];
+    var trackPoints = [];
     if (window.location.search) {
       var params = new URLSearchParams(window.location.search);
       lng = parseFloat(params.get('lng')) || lng;
@@ -27,6 +28,15 @@
       endLat = parseFloat(params.get('endLat'));
       if (params.get('endPoints')) {
         endPoints = params.get('endPoints').split(';').map(function(item) {
+          var arr = item.split(',');
+          if (arr.length === 2) {
+            return [parseFloat(arr[0]), parseFloat(arr[1])];
+          }
+          return null;
+        }).filter(Boolean);
+      }
+      if (params.get('trackPoints')) {
+        trackPoints = params.get('trackPoints').split(';').map(function(item) {
           var arr = item.split(',');
           if (arr.length === 2) {
             return [parseFloat(arr[0]), parseFloat(arr[1])];
@@ -63,6 +73,17 @@
         offset: new AMap.Pixel(-13, -30)
       });
       map.add(endMarker);
+    }
+
+    // 新增：绘制轨迹线
+    if (trackPoints.length > 1) {
+      var polyline = new AMap.Polyline({
+        path: trackPoints,
+        strokeColor: '#1698CE',
+        strokeWeight: 5,
+        strokeOpacity: 0.8
+      });
+      map.add(polyline);
     }
 
     // 关键：地图点击事件
