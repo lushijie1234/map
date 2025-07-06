@@ -18,36 +18,49 @@
 <script>
     var lng = 116.397428, lat = 39.90923;
     var endLng = null, endLat = null;
-    var heading = 0;
+    var endPoints = [];
     if (window.location.search) {
       var params = new URLSearchParams(window.location.search);
       lng = parseFloat(params.get('lng')) || lng;
       lat = parseFloat(params.get('lat')) || lat;
       endLng = parseFloat(params.get('endLng'));
       endLat = parseFloat(params.get('endLat'));
-      heading = parseFloat(params.get('heading')) || 0;
+      if (params.get('endPoints')) {
+        endPoints = params.get('endPoints').split(';').map(function(item) {
+          var arr = item.split(',');
+          if (arr.length === 2) {
+            return [parseFloat(arr[0]), parseFloat(arr[1])];
+          }
+          return null;
+        }).filter(Boolean);
+      }
     }
     var map = new AMap.Map('container', {
       zoom: 15,
       center: [lng, lat]
     });
-    // 用带箭头的圆形marker，支持旋转
     var marker = new AMap.Marker({
-      position: [lng, lat],
-      icon: 'https://webapi.amap.com/theme/v1.3/markers/n/dir.png', // 高德官方方向marker
-      anchor: 'center',
-      offset: new AMap.Pixel(-13, -30),
-      rotation: heading // 旋转角度
+      position: [lng, lat]
     });
     map.add(marker);
 
-    // 新增：显示终点marker
-    if (!isNaN(endLng) && !isNaN(endLat)) {
+    // 新增：显示多个终点marker
+    if (endPoints.length > 0) {
+      endPoints.forEach(function(point) {
+        var endMarker = new AMap.Marker({
+          position: point,
+          icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
+          title: '巡航终点',
+          offset: new AMap.Pixel(-13, -30)
+        });
+        map.add(endMarker);
+      });
+    } else if (!isNaN(endLng) && !isNaN(endLat)) {
       var endMarker = new AMap.Marker({
         position: [endLng, endLat],
-        icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png', // 高德官方终点图标
+        icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
         title: '巡航终点',
-        offset: new AMap.Pixel(-13, -30) // 图标居中
+        offset: new AMap.Pixel(-13, -30)
       });
       map.add(endMarker);
     }
