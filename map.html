@@ -18,19 +18,26 @@
 <script>
     var lng = 116.397428, lat = 39.90923;
     var endLng = null, endLat = null;
+    var heading = 0;
     if (window.location.search) {
       var params = new URLSearchParams(window.location.search);
       lng = parseFloat(params.get('lng')) || lng;
       lat = parseFloat(params.get('lat')) || lat;
       endLng = parseFloat(params.get('endLng'));
       endLat = parseFloat(params.get('endLat'));
+      heading = parseFloat(params.get('heading')) || 0;
     }
     var map = new AMap.Map('container', {
       zoom: 15,
       center: [lng, lat]
     });
+    // 用带箭头的圆形marker，支持旋转
     var marker = new AMap.Marker({
-      position: [lng, lat]
+      position: [lng, lat],
+      icon: 'https://webapi.amap.com/theme/v1.3/markers/n/dir.png', // 高德官方方向marker
+      anchor: 'center',
+      offset: new AMap.Pixel(-13, -30),
+      rotation: heading // 旋转角度
     });
     map.add(marker);
 
