@@ -10,105 +10,43 @@
         window._AMapSecurityConfig = {
           securityJsCode: "5b6b64399e3ef9bbf2d4464b9f861125"
         };
+        // 调试：捕获所有JS错误
+        window.onerror = function(message, source, lineno, colno, error) {
+          console.log('【map.html错误】', message, source, lineno, colno, error);
+        };
+        // 调试：输出location参数
+        console.log('【map.html参数】', location.search);
     </script>
     <script src="https://webapi.amap.com/maps?v=2.0&key=c814ffc35f2a5e5c94cd14b3ce1fc4fc"></script>
 </head>
 <body>
+<h1 style="color:red">Web组件已加载</h1>
+<script>alert('Web组件已加载');</script>
 <div id="container"></div>
 <script>
     var lng = 116.397428, lat = 39.90923;
-    var endLng = null, endLat = null;
-    var endPoints = [];
-    var trackPoints = [];
     if (window.location.search) {
       var params = new URLSearchParams(window.location.search);
       lng = parseFloat(params.get('lng')) || lng;
       lat = parseFloat(params.get('lat')) || lat;
-      endLng = parseFloat(params.get('endLng'));
-      endLat = parseFloat(params.get('endLat'));
-      if (params.get('endPoints')) {
-        endPoints = params.get('endPoints').split(';').map(function(item) {
-          var arr = item.split(',');
-          if (arr.length === 2) {
-            return [parseFloat(arr[0]), parseFloat(arr[1])];
-          }
-          return null;
-        }).filter(Boolean);
-      }
-      if (params.get('trackPoints')) {
-        trackPoints = params.get('trackPoints').split(';').map(function(item) {
-          var arr = item.split(',');
-          if (arr.length === 2) {
-            return [parseFloat(arr[0]), parseFloat(arr[1])];
-          }
-          return null;
-        }).filter(Boolean);
-      }
     }
     var map = new AMap.Map('container', {
-      zoom: 20,
+      zoom: 15,
       center: [lng, lat]
     });
     var marker = new AMap.Marker({
       position: [lng, lat]
     });
     map.add(marker);
-
-    // 新增：显示多个终点marker
-    if (endPoints.length > 0) {
-      endPoints.forEach(function(point) {
-        var endMarker = new AMap.Marker({
-          position: point,
-          icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
-          title: '巡航终点',
-          offset: new AMap.Pixel(-13, -30)
-        });
-        map.add(endMarker);
-      });
-    } else if (!isNaN(endLng) && !isNaN(endLat)) {
-      var endMarker = new AMap.Marker({
-        position: [endLng, endLat],
-        icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
-        title: '巡航终点',
-        offset: new AMap.Pixel(-13, -30)
-      });
-      map.add(endMarker);
-    }
-
-    // 新增：绘制轨迹线
-    if (trackPoints.length > 1) {
-      var polyline = new AMap.Polyline({
-        path: trackPoints,
-        strokeColor: '#1698CE',
-        strokeWeight: 5,
-        strokeOpacity: 0.8
-      });
-      map.add(polyline);
-    }
-
-    // 关键：地图点击事件
+    
+    // 新增：点击地图保存经纬度到window.lastClickedPoint
     map.on('click', function (e) {
-      var endLng = e.lnglat.getLng();
-      var endLat = e.lnglat.getLat();
-      var msg = '已设为巡航终点：经度 ' + endLng + '，纬度 ' + endLat;
-      alert(msg + '\n已自动复制到剪贴板');
-      // 自动复制到剪贴板
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(endLng + ',' + endLat).then(function() {
-          console.log('经纬度已复制到剪贴板');
-        }, function(err) {
-          console.error('复制失败', err);
-        });
-      } else {
-        // 兼容旧浏览器
-        var input = document.createElement('input');
-        input.value = endLng + ',' + endLat;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand('copy');
-        document.body.removeChild(input);
-      }
+      var clickLng = e.lnglat.getLng();
+      var clickLat = e.lnglat.getLat();
+      window.lastClickedPoint = { lng: clickLng, lat: clickLat };
+      // 可选：在地图上添加标记
+      new AMap.Marker({ position: [clickLng, clickLat], map: map });
     });
 </script>
 </body>
-</html>
+</html> 
