@@ -44,7 +44,7 @@
       var clickLng = e.lnglat.getLng();
       var clickLat = e.lnglat.getLat();
       window.lastClickedPoint = { lng: clickLng, lat: clickLat };
-      map.add(new AMap.Marker({ position: [clickLng, clickLat], map: map, icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png' }));
+      // 不再添加蓝色marker
     });
 
     // 新增：解析endPoints参数并添加红色marker
