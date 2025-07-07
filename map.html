@@ -39,13 +39,12 @@
     });
     map.add(marker);
     
-    // 新增：点击地图保存经纬度到window.lastClickedPoint
+    // 普通点击点marker（蓝色）
     map.on('click', function (e) {
       var clickLng = e.lnglat.getLng();
       var clickLat = e.lnglat.getLat();
       window.lastClickedPoint = { lng: clickLng, lat: clickLat };
-      // 可选：在地图上添加标记
-      new AMap.Marker({ position: [clickLng, clickLat], map: map });
+      map.add(new AMap.Marker({ position: [clickLng, clickLat], map: map, icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png' }));
     });
 
     // 新增：解析endPoints参数并添加红色marker
@@ -62,7 +61,7 @@
             if (!isNaN(elng) && !isNaN(elat)) {
               map.add(new AMap.Marker({
                 position: [elng, elat],
-                icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png', // 红色marker
+                icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png', // 红色marker
                 title: '终点'
               }));
             }
