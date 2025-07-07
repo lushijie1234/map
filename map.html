@@ -20,9 +20,7 @@
     <script src="https://webapi.amap.com/maps?v=2.0&key=c814ffc35f2a5e5c94cd14b3ce1fc4fc"></script>
 </head>
 <body>
-<h1 style="color:red">Web组件已加载</h1>
-<script>alert('Web组件已加载');</script>
-<div id="container"></div>
+<div id="container" style="margin-left: 5vw; width: 90vw; height: 90vh;"></div>
 <script>
     var lng = 116.397428, lat = 39.90923;
     if (window.location.search) {
@@ -53,7 +51,7 @@
       var endPointsStr = params.get('endPoints');
       if (endPointsStr) {
         var endPointsArr = endPointsStr.split(';');
-        endPointsArr.forEach(function (pt) {
+        endPointsArr.forEach(function (pt, idx) {
           var parts = pt.split(',');
           if (parts.length === 2) {
             var elng = parseFloat(parts[0]);
@@ -61,8 +59,14 @@
             if (!isNaN(elng) && !isNaN(elat)) {
               map.add(new AMap.Marker({
                 position: [elng, elat],
-                icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png', // 红色marker
-                title: '终点'
+                icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png',
+                title: '终点',
+                label: {
+                  content: String(idx + 1),
+                  offset: new AMap.Pixel(-8, -30),
+                  direction: 'top',
+                  style: { color: '#d32f2f', fontWeight: 'bold', fontSize: '14px', border: 'none', background: 'none' }
+                }
               }));
             }
           }
