@@ -47,6 +47,29 @@
       // 可选：在地图上添加标记
       new AMap.Marker({ position: [clickLng, clickLat], map: map });
     });
+
+    // 新增：解析endPoints参数并添加红色marker
+    if (window.location.search) {
+      var params = new URLSearchParams(window.location.search);
+      var endPointsStr = params.get('endPoints');
+      if (endPointsStr) {
+        var endPointsArr = endPointsStr.split(';');
+        endPointsArr.forEach(function (pt) {
+          var parts = pt.split(',');
+          if (parts.length === 2) {
+            var elng = parseFloat(parts[0]);
+            var elat = parseFloat(parts[1]);
+            if (!isNaN(elng) && !isNaN(elat)) {
+              map.add(new AMap.Marker({
+                position: [elng, elat],
+                icon: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png', // 红色marker
+                title: '终点'
+              }));
+            }
+          }
+        });
+      }
+    }
 </script>
 </body>
 </html> 
